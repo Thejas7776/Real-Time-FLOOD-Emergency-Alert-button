@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flood Alert Watch</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+
+    .watch {
+      width: 300px;
+      height: 330px;
+      background: linear-gradient(to bottom, #222, #000);
+      border-radius: 30px;
+      border: 8px solid #444;
+      box-shadow: 0 0 20px rgba(0,0,0,0.8);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      box-sizing: border-box;
+      color: white;
+      text-align: center;
+    }
+
+    .button {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 0 15px red;
+      margin-bottom: 10px;
+    }
+
+    .message, .time, .maplink, .location {
+      display: none;
+      margin-top: 10px;
+    }
+
+    .message {
+      color: #ff5555;
+      font-size: 14px;
+    }
+
+    .time {
+      color: #00ffcc;
+      font-size: 14px;
+    }
+
+    .location {
+      color: #ffff66;
+      font-size: 13px;
+    }
+
+    .maplink a {
+      color: #3399ff;
+      text-decoration: underline;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="watch">
+    <button class="button" onclick="triggerAlert()">ALERT</button>
+    <div class="time" id="timeDisplay"></div>
+    <div class="location" id="locationDisplay"></div>
+    <div class="message" id="alertMessage"></div>
+    <div class="maplink" id="mapLink"></div>
+  </div>
+
+  <script>
+    function triggerAlert() {
+      const timeBox = document.getElementById('timeDisplay');
+      const alertBox = document.getElementById('alertMessage');
+      const mapBox = document.getElementById('mapLink');
+      const locationBox = document.getElementById('locationDisplay');
+
+      // Show current time
+      const now = new Date();
+      const timeString = now.toLocaleTimeString();
+      timeBox.innerText = `🕒 Time: ${timeString}`;
+      timeBox.style.display = 'block';
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+          const lat = pos.coords.latitude.toFixed(4);
+          const lon = pos.coords.longitude.toFixed(4);
+
+          locationBox.innerText = `📌 Lat: ${lat}, Lon: ${lon}`;
+          locationBox.style.display = 'block';
+
+          const mapURL = `https://www.google.com/maps?q=${lat},${lon}`;
+          mapBox.innerHTML = `<a href="${mapURL}" target="_blank">📍 View Location on Map</a>`;
+          mapBox.style.display = 'block';
+
+          alertBox.innerText = '🚨 Flood Alert issued for your current location.';
+          alertBox.style.display = 'block';
+        }, function() {
+          alertBox.innerText = '⚠️ Location permission denied.';
+          alertBox.style.display = 'block';
+        });
+      } else {
+        alertBox.innerText = '❌ Geolocation not supported.';
+        alertBox.style.display = 'block';
+      }
+    }
+  </script>
+
+</body>
+</html>
